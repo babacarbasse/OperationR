@@ -7,9 +7,7 @@ package test;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.sql.Timestamp;
-import java.util.Date;
 
 /**
  * @author Babacar Basse
@@ -90,7 +88,7 @@ public class SqlRequest {
      * @param templateId type du cas de test (text ou step)
      * @return id du cas de test ajouté ou trouvé
      */
-    public int addSectionCase(String title, int typeId, int sectionId, int userId, int suiteId, int orderDisplay, int templateId) {
+    public int addSectionCase(String title, int typeId, int sectionId, int userId, int suiteId, int orderDisplay, int templateId, String custom_steps_separated) {
         int idCase = this.checkCaseExit(title, sectionId);
         if (idCase != -1) {
             return idCase;
@@ -98,8 +96,10 @@ public class SqlRequest {
         try {
            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
            String sql = "INSERT INTO cases"
-                   + "(title, section_id, display_order, is_copy, priority_id, type_id, user_id, suite_id, updated_by, template_id, updated_on, created_on)"
-                   + " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                   + "(title, section_id, display_order, is_copy, priority_id, type_id, user_id, suite_id, updated_by, template_id,"
+                   + " updated_on, created_on, custom_steps_separated"
+                   + ")"
+                   + " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
            st = this.accessDB.getConn().prepareStatement(sql);
            st.setString(1, title);
            st.setInt(2, sectionId);
@@ -113,6 +113,7 @@ public class SqlRequest {
            st.setInt(10, templateId);
            st.setInt(11, (int) timestamp.getTime());
            st.setInt(12, (int) timestamp.getTime());
+           st.setString(13, custom_steps_separated);
            st.executeUpdate();
            return this.checkSectionExist(title, sectionId);
         } catch(SQLException e) {

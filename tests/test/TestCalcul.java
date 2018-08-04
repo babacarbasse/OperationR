@@ -2,8 +2,6 @@ package test;
 
 import application.*;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -35,17 +33,25 @@ public class TestCalcul extends ApplicationTest{
     //Attribut pour faire les requests sql dans la base de donnée de testRail
     private SqlRequest requestSql;
     
-    private final String sectionName = "Calcule";
+    private final String sectionName = "Calcul";
     private ProjetTestRail projet;
     private int idSection;
     private int idCase;
+    private String caseName = "Test calcul";
+    private final String custom_steps_separated = "["
+            + "{\"content\":\"test calcul simple\",\"expected\":\"affichage d'un résultat quelconque\"},"
+            + "{\"content\":\"Test calcul correct avec l'équation -x^2 + 3x - 2\","
+            + "\"expected\":\"Résultat à afficher: Les solutions sont x1: 2.0 x2: 1.0 S = {2.0 , 1.0}\"}"
+            + "]";
     @Override
     public void start (Stage stage) throws Exception {
         this.projet = new ProjetTestRail("OperationR test");
         this.requestSql = new SqlRequest();
         this.idSection = this.requestSql.addSection(sectionName, this.projet.suitesId, 3, "Section de test des calculs du programme.");
         if (this.idSection != -1) {
-            this.idCase = this.requestSql.addSectionCase("Test calcul", 7, this.idSection, 1, this.projet.suitesId, 1, 2);
+            this.idCase = this.requestSql.addSectionCase(caseName, 7,this.idSection, 1, this.projet.suitesId, 1, 2, custom_steps_separated);
+        } else {
+            this.idCase = this.requestSql.checkCaseExit(caseName, idSection);
         }
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("MainScene.fxml"));
         loader.setController(new Controller());
