@@ -37,7 +37,7 @@ public class TestCalcul extends ApplicationTest{
 
     @Override
     public void start (Stage stage) throws Exception {
-        this.requestSql = new SqlRequest();
+        this.requestSql = new SqlRequest("OperationR test");
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("MainScene.fxml"));
         loader.setController(new Controller());
         Parent mainNode = loader.load();
@@ -84,9 +84,9 @@ public class TestCalcul extends ApplicationTest{
         write("1");
         clickOn("#thirdOp");
         write("0");
-        TimeUnit.SECONDS.sleep(5);
+        // TimeUnit.SECONDS.sleep(5);
         clickOn("#submitButton");
-        TimeUnit.SECONDS.sleep(10);
+        // TimeUnit.SECONDS.sleep(10);
     }
     
 

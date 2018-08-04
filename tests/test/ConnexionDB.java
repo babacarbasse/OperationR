@@ -16,7 +16,7 @@ import java.sql.SQLException;
  */
 public class ConnexionDB {
  
-    Connection conn = null;
+    private Connection conn = null;
     public ConnexionDB() {
         try {
             conn =
@@ -30,4 +30,10 @@ public class ConnexionDB {
             System.out.println("VendorError: " + ex.getErrorCode());
         }
     }
+    
+    
+    public Connection getConn() {
+        return this.conn;
+    }
+    
 }
