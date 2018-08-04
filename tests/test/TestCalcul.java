@@ -1,9 +1,3 @@
-/**
- * @author Babacar Basse
- * @date Samedi 4/08/2018
- * @Decription class TestCalcul pour les tests de calcul
- */
-
 package test;
 
 import application.*;
@@ -30,14 +24,20 @@ import org.loadui.testfx.GuiTest;
 import org.testfx.api.FxToolkit;
 import org.testfx.framework.junit.ApplicationTest;
 
+
 /**
- *
- * @author basse
+ * @author Babacar Basse
+ * @date Samedi 4/08/2018
+ * @Decription class TestCalcul pour les tests de calcul
  */
 public class TestCalcul extends ApplicationTest{
-        
+    
+    //Attribut pour faire les requests sql dans la base de donnée de testRail
+    private SqlRequest requestSql;
+
     @Override
     public void start (Stage stage) throws Exception {
+        this.requestSql = new SqlRequest();
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("MainScene.fxml"));
         loader.setController(new Controller());
         Parent mainNode = loader.load();
@@ -45,6 +45,7 @@ public class TestCalcul extends ApplicationTest{
         stage.show();
         stage.toFront();
     }
+    
     
     public TestCalcul() {
     }
@@ -68,11 +69,10 @@ public class TestCalcul extends ApplicationTest{
         release(new MouseButton[]{});
     }
 
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
-    // @Test
-    // public void hello() {}
+    /**
+     * @description testCase calculSimple pour vérifier l'affichage d'un quelconque résultat
+     * @throws Exception 
+     */
     @Test
     public void testCalculSimple() throws Exception {
         clearInput("#firstOp");
@@ -90,6 +90,10 @@ public class TestCalcul extends ApplicationTest{
     }
     
 
+    /**
+     * @description testCase testCalculSolutionCorrect, test d'un calcul afin de verifier la solution correct ou pas
+     * @throws Exception 
+     */
     @Test
     public void testCalculSolutionCorrect() throws Exception {
         TextArea txtResult = (TextArea) GuiTest.find("#resultField");
