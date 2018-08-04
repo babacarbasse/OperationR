@@ -42,9 +42,9 @@ public class Controller {
 	
 	private Model model;
 	private int a,b,c;
-	private String regex = "^-?\\d{1,}$"; //Regex permettant de vérifier si l'user à entrer un entier
-	private Pattern motif ;              //le regex est compilté et utilisé via un objet de type Pattern
-	private String defaultLng = "fr"; //langage par défaut
+	private String regex = "^-?\\d{1,}$"; //Regex permettant de vï¿½rifier si l'user ï¿½ entrer un entier
+	private Pattern motif ;              //le regex est compiltï¿½ et utilisï¿½ via un objet de type Pattern
+	private String defaultLng = "fr"; //langage par dï¿½faut
 	//TextField
 	@FXML
 	private TextField firstOp; 
@@ -81,7 +81,7 @@ public class Controller {
 	
 	@FXML private AnchorPane main;
 	
-	Controller(){
+	public Controller(){
 		date = new Date();
 		motif = Pattern.compile(regex);
 		model = Model.getInstance();
@@ -101,7 +101,7 @@ public class Controller {
 			try {
 				a = Integer.parseInt(firstOp.getText());
 				 if(a==0) {
-					 AlertModal.showAlert(Alert.AlertType.ERROR, owner, "Form Error!","la valeur de a ne doit pas être nulle");
+					 AlertModal.showAlert(Alert.AlertType.ERROR, owner, "Form Error!","la valeur de a ne doit pas ï¿½tre nulle");
 				 }
 				b = Integer.parseInt(secondOp.getText());
 				c = Integer.parseInt(thirdOp.getText());
@@ -112,7 +112,7 @@ public class Controller {
 			}
 			resolution(a,b,c);
 		}else {
-			 AlertModal.showAlert(Alert.AlertType.ERROR, owner, "Form Error!","Veuiller saisir des nombres ou vérifier que tous les champs sont remplis");
+			 AlertModal.showAlert(Alert.AlertType.ERROR, owner, "Form Error!","Veuiller saisir des nombres ou vï¿½rifier que tous les champs sont remplis");
 			 return;
 		}
 	}
@@ -133,8 +133,8 @@ public class Controller {
 		}else{
 			lngButton.setText("FR");
 			inputLabel.setText("Entrer les valeurs de a,b et c");
-			resultLabel.setText("Résultat");
-			submitButton.setText("Résoudre");
+			resultLabel.setText("Rï¿½sultat");
+			submitButton.setText("Rï¿½soudre");
 			clearButton.setText("Effacer");
 		}
 		   
@@ -142,7 +142,7 @@ public class Controller {
 	
 	/**
 	  * Event Handler du click sur le boutton History
-	  * Ouvre une nouvelle fenêtre et lui associe un controller
+	  * Ouvre une nouvelle fenï¿½tre et lui associe un controller
 	 * @throws SQLException 
 	  */
 	@FXML
@@ -151,12 +151,12 @@ public class Controller {
 		loader.setController(new HistoryControler());
 		Stage primaryStage = new Stage();
 		Parent root = loader.load();
-		primaryStage.setTitle("Application de resolution équation 2nd degré dans R");
+		primaryStage.setTitle("Application de resolution ï¿½quation 2nd degrï¿½ dans R");
 		primaryStage.setScene(new Scene(root,840,600));
 		primaryStage.show();
 	}
 	/**
-	 * Ouvre une fenêtre d'aide lorsqu'on click sur le boutton help
+	 * Ouvre une fenï¿½tre d'aide lorsqu'on click sur le boutton help
 	 * @param event
 	 * @throws IOException
 	 */
@@ -171,7 +171,7 @@ public class Controller {
 		primaryStage.show();
 	}
 	/**
-	 * Efface les différents
+	 * Efface les diffï¿½rents
 	 * @param event
 	 */
 	@FXML
@@ -183,7 +183,7 @@ public class Controller {
 	}
 	
 	/**
-	 * Méthode qui se charge de résoudre une équation du 2nd degré
+	 * Mï¿½thode qui se charge de rï¿½soudre une ï¿½quation du 2nd degrï¿½
 	 * @param a | b | c : int
 	 * ********/
 	
@@ -199,8 +199,8 @@ public class Controller {
 				 resultField.setText("There is no solutions in R");
 				 return;
 			 }	 
-			  resultField.setText("Le système n'admet pas de solutions dans R");
-			  model.insertStatement(a+"x²"+"+("+b+")"+"x"+"+("+c+")","Le système n'admet pas de solutions dans R", new Date());
+			  resultField.setText("Le systï¿½me n'admet pas de solutions dans R");
+			  model.insertStatement(a+"xï¿½"+"+("+b+")"+"x"+"+("+c+")","Le systï¿½me n'admet pas de solutions dans R", new Date());
 			 return;
 		}
 		
@@ -210,8 +210,8 @@ public class Controller {
 				 resultField.setText("Double solution x0 :"+x0+"S = {"+x0+"}");
 				 return;
 			 }		
-			 resultField.setText("Le système admet une solution double x0 :"+x0+" S = {"+x0+"}");
-			 model.insertStatement(a+"x²"+"+("+b+")"+"x"+"+("+c+")","Le système admet une solution double x0 :"+x0+" S = {"+x0+"}", new Date());
+			 resultField.setText("Le systï¿½me admet une solution double x0 :"+x0+" S = {"+x0+"}");
+			 model.insertStatement(a+"xï¿½"+"+("+b+")"+"x"+"+("+c+")","Le systï¿½me admet une solution double x0 :"+x0+" S = {"+x0+"}", new Date());
 			return;
 		}
 		
@@ -223,7 +223,7 @@ public class Controller {
 				 return;
 			 }
 		     resultField.setText("Les solutions sont x1: "+x1+" x2: "+x2+" S = {"+x1+" , "+x2+"}");
-		     model.insertStatement(a+"x²"+"+("+b+")"+"x"+"+("+c+")","Les solutions sont x1: "+x1+" x2: "+x2+" S = {"+x1+" , "+x2+"}", new Date());
+		     model.insertStatement(a+"xï¿½"+"+("+b+")"+"x"+"+("+c+")","Les solutions sont x1: "+x1+" x2: "+x2+" S = {"+x1+" , "+x2+"}", new Date());
 		     return;
 		     
 		}
