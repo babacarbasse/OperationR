@@ -145,4 +145,72 @@ public class SqlRequest {
         }
     }
     
+    
+    /**
+     * @description cette méthode nous permet d'ajouter un testRun dans la bdd testRail
+     * @param suite_id suite id relative au projet
+     * @param user_id id user effectuant le test
+     * @param project_id id du projet
+     * @param is_completed  valeur (0 ou 1) pour dire si c'est complet ou pas
+     * @param include_all  valeur (0 ou 1) pour dire si c'est tous les cas son inclus ou pas
+     * @param name nom du testRun
+     * @param description description du testRun
+     * @param is_plan  valeur (0 ou 1) pour dire si c'est planifié ou pas
+     * @param is_editable valeur (0 ou 1) pour dire si c'est editable ou pas
+     * @param updated_by id User qui effectue l'update/ajout
+     * @return id du testRun ajouter sinon -1
+     */
+    public int ajoutTestRun(int suite_id, int user_id, int project_id, int is_completed, int include_all, String name,
+            String description, int is_plan, int is_editable, int updated_by
+        ) {
+        try {
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            String sql = "INSERT INTO runs ("
+                    + "suite_id, user_id, project_id, is_completed, include_all, name, description,"
+                    + "is_plan, is_editable, updated_by, created_on, updated_on"
+                    + ")"
+                    + "values(?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?)";
+            st = this.accessDB.getConn().prepareStatement(sql);
+            st.setInt(1, suite_id);
+            st.setInt(2, user_id);
+            st.setInt(3, project_id);
+            st.setInt(4, is_completed);
+            st.setInt(5, include_all);
+            st.setString(6, name);
+            st.setString(7, description);
+            st.setInt(8, is_plan);
+            st.setInt(9, is_editable);
+            st.setInt(10, updated_by);
+            st.setInt(11, (int) timestamp.getTime());
+            st.setInt(12, (int) timestamp.getTime());
+            st.executeUpdate();
+            return this.getTestRunId(name, project_id);
+        } catch(SQLException e) {
+           System.out.println("!!! " + e.toString());
+           return -1; 
+        }
+    }
+    
+    /**
+     * @description cette méthode nous retourne un id d'un test run
+     * @param name du test run
+     * @param project_id id du projet
+     * @return id du testrun si existe sinon -1
+     */
+    public int getTestRunId(String name, int project_id) {
+        try {
+            String sql = "SELECT id from runs WHERE name=? AND project_id = ?";
+            st = this.accessDB.getConn().prepareStatement(sql);
+            st.setString(1, name);
+            st.setInt(2, project_id);
+            this.rs = st.executeQuery();
+            if (this.rs.next()) {
+                return rs.getInt("id");
+            }
+            return -1;
+         } catch(SQLException e) {
+            System.out.println("!!! " + e.toString());
+            return -1;
+        }
+    }
 }
