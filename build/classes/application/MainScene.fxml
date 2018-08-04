@@ -66,7 +66,7 @@
                      </font>
                   </Label>
                   <Button fx:id="lngButton" layoutX="656.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleTranslateButton" text="FR" />
-                  <Button id="submitButton" fx:id="clearButton" layoutX="149.0" layoutY="247.0" mnemonicParsing="false" onAction="#handleClearButton" prefHeight="34.0" prefWidth="97.0" text="Effacer" />
+                  <Button id="clearButton" fx:id="clearButton" layoutX="149.0" layoutY="247.0" mnemonicParsing="false" onAction="#handleClearButton" prefHeight="34.0" prefWidth="97.0" text="Effacer" />
                </children>
             </AnchorPane>
         </items>

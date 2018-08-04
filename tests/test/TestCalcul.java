@@ -7,6 +7,9 @@
 package test;
 
 import application.*;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -17,9 +20,13 @@ import static org.junit.Assert.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
+import static org.hamcrest.CoreMatchers.is;
+import org.loadui.testfx.GuiTest;
 import org.testfx.api.FxToolkit;
 import org.testfx.framework.junit.ApplicationTest;
 
@@ -31,7 +38,7 @@ public class TestCalcul extends ApplicationTest{
         
     @Override
     public void start (Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(Main.class.getResource("TableView.fxml"));
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("MainScene.fxml"));
         loader.setController(new Controller());
         Parent mainNode = loader.load();
         stage.setScene(new Scene(mainNode));
@@ -67,6 +74,26 @@ public class TestCalcul extends ApplicationTest{
     // @Test
     // public void hello() {}
     @Test
-    public void test() {
+    public void testCalculSimple() throws Exception {
+        TextArea txtResult = (TextArea) GuiTest.find("#resultField");
+        clearInput("#firstOp");
+        clearInput("#secondOp");
+        clearInput("#thirdOp");
+        clickOn("#firstOp");
+        write("2");
+        clickOn("#secondOp");
+        write("1");
+        clickOn("#thirdOp");
+        write("0");
+        TimeUnit.SECONDS.sleep(5);
+        clickOn("#submitButton");
+        TimeUnit.SECONDS.sleep(10);
+    }
+    
+    
+    
+    public void clearInput(String inputName) {
+        TextField textField = (TextField) GuiTest.find(inputName);
+        textField.clear();
     }
 }
