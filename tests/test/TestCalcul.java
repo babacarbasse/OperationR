@@ -75,7 +75,6 @@ public class TestCalcul extends ApplicationTest{
     // public void hello() {}
     @Test
     public void testCalculSimple() throws Exception {
-        TextArea txtResult = (TextArea) GuiTest.find("#resultField");
         clearInput("#firstOp");
         clearInput("#secondOp");
         clearInput("#thirdOp");
@@ -90,6 +89,24 @@ public class TestCalcul extends ApplicationTest{
         TimeUnit.SECONDS.sleep(10);
     }
     
+
+    @Test
+    public void testCalculSolutionCorrect() throws Exception {
+        TextArea txtResult = (TextArea) GuiTest.find("#resultField");
+        clearInput("#firstOp");
+        clearInput("#secondOp");
+        clearInput("#thirdOp");
+        clickOn("#firstOp");
+        write("-1");
+        clickOn("#secondOp");
+        write("3");
+        clickOn("#thirdOp");
+        write("-2");
+        TimeUnit.SECONDS.sleep(5);
+        clickOn("#submitButton");
+        TimeUnit.SECONDS.sleep(5);
+        assertThat(txtResult.getText(), is("Les solutions sont x1: 2.0 x2: 1.0 S = {2.0 , 1.0}"));
+    }
     
     
     public void clearInput(String inputName) {
