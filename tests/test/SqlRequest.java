@@ -213,4 +213,64 @@ public class SqlRequest {
             return -1;
         }
     }
+    
+    /**
+     * @description methode pour ajouter un test sur un testRun
+     * @param run_id id du testRun 
+     * @param case_id id du testCase
+     * @param is_selected int (0 ou 1) dire si c'est selectionné ou pas
+     * @param is_completed int (0 ou 1) dire si c'est complet ou pas
+     * @param in_progress int (0 ou 1) dire si c'est en progress ou pas
+     * @param content_id id du content (du case)
+     * @param user_d id du user 
+     */
+    public void addTest(int run_id, int case_id, int is_selected, int is_completed,
+            int in_progress, int content_id, int user_d) {
+        try {
+            int status_id = this.getLastStatusId(run_id);
+            if (status_id == -1) {
+                status_id = 1;
+            }
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            String sql = "INSERT INTO tests ("
+                    + "run_id, case_id, status_id, is_selected, is_completed, in_progress, content_id,"
+                    + "tested_by, tested_on"
+                    + ")"
+                    + "values(?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?)";
+            st = this.accessDB.getConn().prepareStatement(sql);
+            st.setInt(1, run_id);
+            st.setInt(2, case_id);
+            st.setInt(3, status_id);
+            st.setInt(4, is_selected);
+            st.setInt(5, is_completed);
+            st.setInt(5, in_progress);
+            st.setInt(5, content_id);
+            st.setInt(8, user_d);
+            st.setInt(9, (int) timestamp.getTime());
+            st.executeUpdate();
+        } catch(SQLException e) {
+           System.out.println("!!! " + e.toString());
+        }
+    }
+    
+    /**
+     * 
+     * @param runId id du testRun
+     * @return retourne le dernier status d'un testRun
+     */
+    public int getLastStatusId(int runId) {
+        try {
+            String sql = "SELECT status_id FROM tests where run_id = ? ORDER  BY Id DESC  LIMIT 1";
+            st = this.accessDB.getConn().prepareStatement(sql);
+            st.setInt(1, runId);
+            this.rs = st.executeQuery();
+            if (this.rs.next()) {
+                return rs.getInt("status_id");
+            }
+            return -1;
+         } catch(SQLException e) {
+            System.out.println("!!! " + e.toString());
+            return -1;
+        }
+    }
 }
