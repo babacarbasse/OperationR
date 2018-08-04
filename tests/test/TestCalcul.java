@@ -34,10 +34,19 @@ public class TestCalcul extends ApplicationTest{
     
     //Attribut pour faire les requests sql dans la base de donnée de testRail
     private SqlRequest requestSql;
-
+    
+    private final String sectionName = "Calcule";
+    private ProjetTestRail projet;
+    private int idSection;
+    private int idCase;
     @Override
     public void start (Stage stage) throws Exception {
-        this.requestSql = new SqlRequest("OperationR test");
+        this.projet = new ProjetTestRail("OperationR test");
+        this.requestSql = new SqlRequest();
+        this.idSection = this.requestSql.addSection(sectionName, this.projet.suitesId, 3, "Section de test des calculs du programme.");
+        if (this.idSection != -1) {
+            this.idCase = this.requestSql.addSectionCase("Test calcul", 7, this.idSection, 1, this.projet.suitesId, 1, 2);
+        }
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("MainScene.fxml"));
         loader.setController(new Controller());
         Parent mainNode = loader.load();

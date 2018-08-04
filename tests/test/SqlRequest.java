@@ -8,6 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * @author Babacar Basse
@@ -19,46 +21,126 @@ public class SqlRequest {
     private ConnexionDB accessDB;
     private PreparedStatement st = null;
     private ResultSet rs = null;
-    private ProjetTestRail projet;
-    public SqlRequest(String projetName) {
+    public SqlRequest() {
         this.accessDB = new ConnexionDB();
-        this.projet = new ProjetTestRail(projetName);
     }
     
-     public Boolean addSection(String sectionName) {
-        if (this.checkSectionExist(sectionName)) {
-            System.out.println("already exits");
-            return true;
+    /**
+     * @description cette méthode permettra d'ajouter une section à notre projet testRail
+     * 
+     * @param sectionName nom de la section
+     * @param idSuite id de la suite en rapport avec le projet
+     * @param order ordre affichage de la section
+     * @param description description de la section
+     * @return id de la section à ajouter ou à récupérer
+     */
+    public int addSection(String sectionName, int idSuite, int order, String description) {
+        int idSection = this.checkSectionExist(sectionName, idSuite);
+        if (idSection != -1) {
+            return idSection;
         }
-        return true;
-        /*
         try {
-            String sql = "INSERT INTO Agence(nomAg, adresseAg) values (?,?)";
-            st = this.accessDB.getConn().prepareStatement(sql);
-            st.setString(1, a.getNomAg());
-            st.setString(2, a.getAdresseAg());
-            st.executeUpdate();
-            return true;
+           String sql = "INSERT INTO sections(suite_id, name, display_order, is_copy, depth, description) values (?, ?, ?, ?, ?, ?)";
+           st = this.accessDB.getConn().prepareStatement(sql);
+           st.setInt(1, idSuite);
+           st.setString(2, sectionName);
+           st.setInt(3, order);
+           st.setInt(4, 0);
+           st.setInt(5, 0);
+           st.setString(6, description);
+           st.executeUpdate();
+           return this.checkSectionExist(sectionName, idSuite);
         } catch(SQLException e) {
             System.out.println("!!! " + e.toString());
-            return false;
-        }*/
+            return -1;
+        }
     }
      
-     public Boolean checkSectionExist(String sectionName) {
+    /**
+     * @description cette méthode permettra de vérifier si une section existe déjà ou pas avant de l'ajouter
+     * @param sectionName nom de la section 
+     * @param suitesId id de la suite en rapport avec le projet
+     * @return id de la section si ca existe sinon -1
+     */
+    public int checkSectionExist(String sectionName, int suitesId) {
         try {
-             String sql = "SELECT count(*) from sections WHERE name=? AND suite_id = ?";
-             st = this.accessDB.getConn().prepareStatement(sql);
-             st.setString(1, sectionName);
-             st.setInt(2, this.projet.suitesId);
-             this.rs = st.executeQuery();
-             if (this.rs.getRow() != 0) {
-                 return true;
-             }
-             return false;
+            String sql = "SELECT id from sections WHERE name=? AND suite_id = ?";
+            st = this.accessDB.getConn().prepareStatement(sql);
+            st.setString(1, sectionName);
+            st.setInt(2, suitesId);
+            this.rs = st.executeQuery();
+            if (this.rs.next()) {
+                return rs.getInt("id");
+            }
+            return -1;
          } catch(SQLException e) {
             System.out.println("!!! " + e.toString());
-            return false;
+            return -1;
+        }
+    }
+     
+    /**
+     * @description cette méthode va permettre d'ajouter un case dans notre section
+     * @param title titre cas de test
+     * @param typeId id du type de test
+     * @param sectionId section du cas de test 
+     * @param userId id du user effectuant le test
+     * @param suiteId id de la suite en relation avec le projet
+     * @param orderDisplay ordre d'affichage du cas de test
+     * @param templateId type du cas de test (text ou step)
+     * @return id du cas de test ajouté ou trouvé
+     */
+    public int addSectionCase(String title, int typeId, int sectionId, int userId, int suiteId, int orderDisplay, int templateId) {
+        int idCase = this.checkCaseExit(title, sectionId);
+        if (idCase != -1) {
+            return idCase;
+        }
+        try {
+           Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+           String sql = "INSERT INTO cases"
+                   + "(title, section_id, display_order, is_copy, priority_id, type_id, user_id, suite_id, updated_by, template_id, updated_on, created_on)"
+                   + " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+           st = this.accessDB.getConn().prepareStatement(sql);
+           st.setString(1, title);
+           st.setInt(2, sectionId);
+           st.setInt(3, orderDisplay);
+           st.setInt(4, 0);
+           st.setInt(5, 2);
+           st.setInt(6, typeId);
+           st.setInt(7, userId);
+           st.setInt(8, suiteId);
+           st.setInt(9, userId);
+           st.setInt(10, templateId);
+           st.setInt(11, (int) timestamp.getTime());
+           st.setInt(12, (int) timestamp.getTime());
+           st.executeUpdate();
+           return this.checkSectionExist(title, sectionId);
+        } catch(SQLException e) {
+            System.out.println("!!! " + e.toString());
+            return -1;
+        }
+    }
+    
+    /**
+     * @description cette méthode permettra de vérifier si un cas de test existe deja dans une section donnée
+     * @param title titre du cas
+     * @param sectionId section du cas
+     * @return id du test case si ca existe sinon -1
+     */
+    public int checkCaseExit(String title, int sectionId) {
+        try {
+            String sql = "SELECT id from cases WHERE title=? AND section_id = ?";
+            st = this.accessDB.getConn().prepareStatement(sql);
+            st.setString(1, title);
+            st.setInt(2, sectionId);
+            this.rs = st.executeQuery();
+            if (this.rs.next()) {
+                return rs.getInt("id");
+            }
+            return -1;
+         } catch(SQLException e) {
+            System.out.println("!!! " + e.toString());
+            return -1;
         }
     }
     
