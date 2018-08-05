@@ -160,16 +160,16 @@ public class SqlRequest {
      * @param updated_by id User qui effectue l'update/ajout
      * @return id du testRun ajouter sinon -1
      */
-    public int ajoutTestRun(int suite_id, int user_id, int project_id, int is_completed, int include_all, String name,
-            String description, int is_plan, int is_editable, int updated_by
+    public int addRun(int suite_id, int user_id, int project_id, int is_completed, int include_all, String name,
+            String description, int is_plan, int is_editable, int updated_by, int untested_count, int content_id
         ) {
         try {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             String sql = "INSERT INTO runs ("
                     + "suite_id, user_id, project_id, is_completed, include_all, name, description,"
-                    + "is_plan, is_editable, updated_by, created_on, updated_on"
+                    + "is_plan, is_editable, updated_by, created_on, updated_on, untested_count, content_id"
                     + ")"
-                    + "values(?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?)";
+                    + "values(?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?)";
             st = this.accessDB.getConn().prepareStatement(sql);
             st.setInt(1, suite_id);
             st.setInt(2, user_id);
@@ -183,6 +183,8 @@ public class SqlRequest {
             st.setInt(10, updated_by);
             st.setInt(11, (int) timestamp.getTime());
             st.setInt(12, (int) timestamp.getTime());
+            st.setInt(13, untested_count);
+            st.setInt(14, content_id);
             st.executeUpdate();
             return this.getTestRunId(name, project_id);
         } catch(SQLException e) {
@@ -227,27 +229,30 @@ public class SqlRequest {
     public void addTest(int run_id, int case_id, int is_selected, int is_completed,
             int in_progress, int content_id, int user_d) {
         try {
+            /*
             int status_id = this.getLastStatusId(run_id);
             if (status_id == -1) {
                 status_id = 1;
-            }
+            }*/
+            int status_id = 3;
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             String sql = "INSERT INTO tests ("
                     + "run_id, case_id, status_id, is_selected, is_completed, in_progress, content_id,"
                     + "tested_by, tested_on"
                     + ")"
-                    + "values(?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?)";
+                    + "values(?, ?, ?, ?, ?, ?,?, ?, ?)";
             st = this.accessDB.getConn().prepareStatement(sql);
             st.setInt(1, run_id);
             st.setInt(2, case_id);
             st.setInt(3, status_id);
             st.setInt(4, is_selected);
             st.setInt(5, is_completed);
-            st.setInt(5, in_progress);
-            st.setInt(5, content_id);
+            st.setInt(6, in_progress);
+            st.setInt(7, content_id);
             st.setInt(8, user_d);
             st.setInt(9, (int) timestamp.getTime());
             st.executeUpdate();
+            System.out.println("test addedd");
         } catch(SQLException e) {
            System.out.println("!!! " + e.toString());
         }
@@ -266,6 +271,23 @@ public class SqlRequest {
             this.rs = st.executeQuery();
             if (this.rs.next()) {
                 return rs.getInt("status_id");
+            }
+            return -1;
+         } catch(SQLException e) {
+            System.out.println("!!! " + e.toString());
+            return -1;
+        }
+    }
+    
+    public int checkTestRunExit(int id_projet, String description) {
+        try {
+            String sql = "SELECT id FROM runs where project_id = ? AND description = ? ORDER  BY Id DESC  LIMIT 1";
+            st = this.accessDB.getConn().prepareStatement(sql);
+            st.setInt(1, id_projet);
+            st.setString(2, description);
+            this.rs = st.executeQuery();
+            if (this.rs.next()) {
+                return rs.getInt("id");
             }
             return -1;
          } catch(SQLException e) {
